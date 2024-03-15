@@ -12,3 +12,8 @@ To build for web:
     $ python -m http.server
 
 Then navigate to `http://localhost:8000/game.html` in a web browser.
+
+```
+$ zig version
+0.11.0
+```

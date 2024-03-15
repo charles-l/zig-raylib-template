@@ -12,17 +12,17 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
     });
 
-    libraylib.addCSourceFile("raylib/src/rcore.c", &.{"-fno-sanitize=undefined"});
-    libraylib.addCSourceFile("raylib/src/rshapes.c", &.{"-fno-sanitize=undefined"});
-    libraylib.addCSourceFile("raylib/src/rtextures.c", &.{"-fno-sanitize=undefined"});
-    libraylib.addCSourceFile("raylib/src/rtext.c", &.{"-fno-sanitize=undefined"});
-    libraylib.addCSourceFile("raylib/src/rmodels.c", &.{"-fno-sanitize=undefined"});
-    libraylib.addCSourceFile("raylib/src/utils.c", &.{"-fno-sanitize=undefined"});
-    libraylib.addCSourceFile("raylib/src/raudio.c", &.{"-fno-sanitize=undefined"});
-
+    const flags = &.{ "-fno-sanitize=undefined", "-D_GLFW_X11" };
+    libraylib.addCSourceFile(.{ .file = .{ .path = "raylib/src/rcore.c" }, .flags = flags });
+    libraylib.addCSourceFile(.{ .file = .{ .path = "raylib/src/rshapes.c" }, .flags = flags });
+    libraylib.addCSourceFile(.{ .file = .{ .path = "raylib/src/rtextures.c" }, .flags = flags });
+    libraylib.addCSourceFile(.{ .file = .{ .path = "raylib/src/rtext.c" }, .flags = flags });
+    libraylib.addCSourceFile(.{ .file = .{ .path = "raylib/src/rmodels.c" }, .flags = flags });
+    libraylib.addCSourceFile(.{ .file = .{ .path = "raylib/src/utils.c" }, .flags = flags });
+    libraylib.addCSourceFile(.{ .file = .{ .path = "raylib/src/raudio.c" }, .flags = flags });
     libraylib.linkLibC();
-    libraylib.addIncludePath("raylib/src");
-    libraylib.addIncludePath("raylib/src/external/glfw/include/");
+    libraylib.addIncludePath(.{ .path = "raylib/src" });
+    libraylib.addIncludePath(.{ .path = "raylib/src/external/glfw/include" });
 
     if (is_web_target) {
         if (b.sysroot == null) {
@@ -36,7 +36,7 @@ pub fn build(b: *std.Build) !void {
         defer b.allocator.free(em_include_path);
 
         libraylib.defineCMacro("PLATFORM_WEB", "1");
-        libraylib.addIncludePath(em_include_path);
+        libraylib.addIncludePath(.{ .path = em_include_path });
         libraylib.defineCMacro("GRAPHICS_API_OPENGL_ES2", "1");
         libraylib.stack_protector = false;
         b.installArtifact(libraylib);
@@ -47,7 +47,7 @@ pub fn build(b: *std.Build) !void {
             .target = target,
             .optimize = optimize,
         });
-        libgame.addIncludePath("raylib/src");
+        libgame.addIncludePath(.{ .path = "raylib/src" });
         b.installArtifact(libgame);
 
         // `source ~/src/emsdk/emsdk_env.sh` first
@@ -75,7 +75,7 @@ pub fn build(b: *std.Build) !void {
         b.getInstallStep().dependOn(&emcc.step);
     } else {
         libraylib.defineCMacro("PLATFORM_DESKTOP", "1");
-        libraylib.addCSourceFile("raylib/src/rglfw.c", &.{ "-fno-sanitize=undefined", "-D_GNU_SOURCE" });
+        libraylib.addCSourceFile(.{ .file = .{ .path = "raylib/src/rglfw.c" }, .flags = &.{ "-fno-sanitize=undefined", "-D_GNU_SOURCE" } });
 
         if (target.isWindows()) {
             libraylib.linkSystemLibrary("opengl32");
@@ -94,7 +94,7 @@ pub fn build(b: *std.Build) !void {
             .optimize = optimize,
         });
 
-        exe.addIncludePath("raylib/src");
+        exe.addIncludePath(.{ .path = "raylib/src" });
 
         exe.linkLibrary(libraylib);
 

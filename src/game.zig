@@ -23,9 +23,9 @@ pub fn update() void {
     rl.BeginMode3D(cam);
     {
         rl.DrawCube(.{
-            .x = perlin.perlin1(@floatCast(f32, rl.GetTime())),
+            .x = perlin.perlin1(@floatCast(rl.GetTime())),
             .y = 0,
-            .z = perlin.perlin1(@floatCast(f32, rl.GetTime() + 83)),
+            .z = perlin.perlin1(@floatCast(rl.GetTime() + 83)),
         }, 1, 1, 1, rl.RED);
         rl.DrawGrid(10, 1);
     }
